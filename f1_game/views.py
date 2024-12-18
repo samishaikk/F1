@@ -10,7 +10,6 @@ def team_selection_view(request):
         selected_car_id = request.POST.get('car')
         selected_engineer_id = request.POST.get('engineer')
         
-        # Fetch selected team members
         selected_driver = Driver.objects.get(id=selected_driver_id)
         selected_car = Car.objects.get(id=selected_car_id)
         selected_engineer = Engineer.objects.get(id=selected_engineer_id)
@@ -25,7 +24,6 @@ def team_selection_view(request):
                 'budget': 100
             })
         
-        # Store team in session
         request.session['team'] = {
             'driver': selected_driver.name,
             'car': selected_car.name,
@@ -34,13 +32,11 @@ def team_selection_view(request):
         }
         return redirect('race_setup')
 
-    # Fetch all options for display
     drivers = Driver.objects.all()
     cars = Car.objects.all()
     engineers = Engineer.objects.all()
     budget = 100
 
-    # AI Recommendations (optional)
     recommendations = get_team_recommendations(budget, drivers, cars, engineers)
 
     return render(request, 'f1/team_selection.html', {
@@ -59,7 +55,6 @@ def race_setup_view(request):
     if not team:
         return redirect('team_selection')
 
-    # Initial game state
     game_state = {
         'tire_wear': 0,
         'fuel': 100,
@@ -67,7 +62,6 @@ def race_setup_view(request):
     }
     request.session['game_state'] = game_state
 
-    # Weather simulation
     weather_timeline = [
         {'laps': '1-10', 'weather': 'Sunny'},
         {'laps': '11-20', 'weather': 'Cloudy'},
@@ -90,7 +84,6 @@ def start_race_view(request):
     if not team or not game_state:
         return redirect('team_selection')
     
-    # Initialize race state
     race_state = {
         'lap': 1,
         'position': game_state['position'],
@@ -99,15 +92,14 @@ def start_race_view(request):
     }
     request.session['race_state'] = race_state
 
-    # Generate race positions for the template
-    race_positions = list(range(1, 21))  # Positions from 1 to 20
+    race_positions = list(range(1, 21))  
 
 
 
     return render(request, 'f1/race.html', {
         'team': team,
         'race_state': race_state,
-        'race_positions': race_positions  # Pass the range as a context variable
+        'race_positions': race_positions  
     })
 
 
@@ -137,18 +129,14 @@ def race_strategy_view(request):
     strategy = request.POST.get('strategy', 'normal')
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
-    # Increment lap only during auto updates
     if is_ajax and strategy == 'normal':
         race_state['lap'] += 1
 
-    # Apply strategy effects
     race_state = handle_strategy(strategy, race_state)
 
-    # Ensure values stay within bounds
     race_state['tire_wear'] = min(100, max(0, race_state['tire_wear']))
     race_state['fuel'] = min(100, max(0, race_state['fuel']))
 
-    # Generate race positions dynamically for the table
     max_positions = 20
     race_positions = []
     for i in range(1, max_positions + 1):
@@ -165,7 +153,6 @@ def race_strategy_view(request):
                 'time_delta': str({i-race_state['position']})
             })
 
-    # Check race-ending conditions
     race_over = False
     end_message = None
 
@@ -182,7 +169,6 @@ def race_strategy_view(request):
         end_message = "Race completed!"
         race_over = True
 
-    # Update session with race state
     request.session['race_state'] = race_state
 
     if race_over:
@@ -219,16 +205,14 @@ def race_finish_view(request):
     if not team or not final_position:
         return redirect('team_selection')
     
-    # Calculate prize money based on position
     prize_money = {
         1: 1000000,
         2: 500000,
         3: 250000,
         4: 100000,
         5: 50000
-    }.get(final_position, 10000)  # Default prize for positions > 5
+    }.get(final_position, 10000)
     
-    # Clear game session data
     request.session.pop('race_state', None)
     request.session.pop('game_state', None)
     request.session.pop('final_position', None)
@@ -243,8 +227,8 @@ def race_finish_view(request):
     })
 
 def race_view(request):
-    race_state = RaceState.objects.get(id=1)  # Example, adjust as needed
-    race_positions = RacePosition.objects.all().order_by('position')  # Example, adjust as needed
+    race_state = RaceState.objects.get(id=1)  
+    race_positions = RacePosition.objects.all().order_by('position')  
 
     context = {
         'race_state': race_state,
