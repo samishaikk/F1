@@ -68,24 +68,6 @@
     <button type="submit" class="btn btn-primary">Confirm Team</button>
 </form>
 
-    <div class="mt-4">
-        <h3>Recommended Combinations</h3>
-        <div class="list-group">
-            {% for rec in recommendations %}
-                <div class="list-group-item">
-                    <h5 class="mb-1">Recommended Team #{{ forloop.counter }}</h5>
-                    <div class="mb-2" style="white-space: pre-line">{{ rec.description }}</div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-primary">Performance: {{ rec.performance_score|floatformat:1 }}</span>
-                        <span class="text-success">Cost: ${{ rec.total_cost }}</span>
-                        <span class="text-info">Remaining: ${{ rec.remaining_budget }}</span>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="alert alert-info">
-                    No recommendations available for your budget.
-                </div>
-            {% endfor %}
-        </div>
+    
     </div>
 {% endblock %}
