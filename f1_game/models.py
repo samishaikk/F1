@@ -49,17 +49,14 @@ def get_team_recommendations(budget, drivers, cars, engineers):
     """
     recommendations = []
     
-    # Convert querysets to lists for easier manipulation
     drivers_list = list(drivers)
     cars_list = list(cars)
     engineers_list = list(engineers)
 
-    # Sort components by performance/skill
     drivers_list.sort(key=lambda x: x.skill, reverse=True)
     cars_list.sort(key=lambda x: x.performance, reverse=True)
     engineers_list.sort(key=lambda x: x.cost, reverse=True)
 
-    # Try to find combinations starting with top performers
     for driver in drivers_list[:3]:
         remaining = budget - driver.cost
         if remaining <= 0:
@@ -85,8 +82,7 @@ def get_team_recommendations(budget, drivers, cars, engineers):
                         'performance_score': perf_score,
                         'remaining_budget': budget - total_cost
                     })
-                    break  # Found a valid engineer, move to next car
-            
+                    break  
             if len(recommendations) >= 3:
                 break
         
@@ -95,13 +91,11 @@ def get_team_recommendations(budget, drivers, cars, engineers):
 
     return recommendations[:3]
 
-# Strategy handler (from strategy.js)
 def handle_strategy(strategy, race_state):
     """
     Adjust game state based on chosen strategy.
     Sets wear rates instead of instant changes.
     """
-    # Base rates per lap
     base_tire_wear = 2
     base_fuel_consumption = 2
 
@@ -119,7 +113,7 @@ def handle_strategy(strategy, race_state):
         race_state['tire_wear'] = 0
         race_state['fuel'] = 100
         race_state['position'] = min(20, race_state['position'] + random.randrange(3, 5))
-    else:  # Normal strategy
+    else: 
         race_state['tire_wear'] += base_tire_wear
         race_state['fuel'] -= base_fuel_consumption
 
