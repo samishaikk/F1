@@ -4,9 +4,7 @@ from .models import Driver, Car, Engineer, RaceState, RacePosition
 from .utils import get_team_recommendations, handle_strategy
 
 def team_selection_view(request):
-    """
-    Handles team selection logic.
-    """
+   
     if request.method == 'POST':
         selected_driver_id = request.POST.get('driver')
         selected_car_id = request.POST.get('car')
